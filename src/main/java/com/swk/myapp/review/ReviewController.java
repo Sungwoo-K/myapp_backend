@@ -20,11 +20,12 @@ public class ReviewController {
     ReviewRepository repo;
 
     @GetMapping
-    public List<Review> getReviews() {
+    public Review getReview(@RequestParam long no) {
+        Optional<Review> findReview = repo.findById(no);
 
-        List<Review> reviews = repo.findAll();
+        Review review = findReview.get();
 
-        return reviews;
+        return review;
     }
 
     @GetMapping(value = "/paging")
@@ -54,8 +55,6 @@ public class ReviewController {
             Map<String, Object> res = new HashMap<>();
             res.put("message", "소중한 리뷰 감사합니다.");
 
-            // HTTP Status Code: 201 Created
-            // 리소스가 정상적으로 생성되었음.
             return ResponseEntity.status(HttpStatus.CREATED).body(res);
         }
         return ResponseEntity.ok().build();
@@ -68,8 +67,8 @@ public class ReviewController {
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
-    @PutMapping(value = "/{no}")
-    public ResponseEntity modifyReview(@PathVariable long no, @RequestBody ReviewModifyRequest review) {
+    @PutMapping
+    public ResponseEntity<Map<String,Object>> modifyReview(@RequestParam long no, @RequestBody ReviewModifyRequest review) {
 
         Optional<Review> findReview = repo.findById(no);
 
@@ -111,8 +110,13 @@ public class ReviewController {
             toModifyReview.setFinish(review.getFinish());
         }
 
+
+
         repo.save(toModifyReview);
 
-        return ResponseEntity.ok().build();
+        Map<String, Object> res = new HashMap<>();
+        res.put("message", "정상적으로 수정되었습니다.");
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(res);
     }
 }
