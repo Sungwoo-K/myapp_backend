@@ -20,12 +20,16 @@ public class ReviewController {
     ReviewRepository repo;
 
     @GetMapping
-    public Review getReview(@RequestParam long no) {
+    public ResponseEntity<Review> getReview(@RequestParam long no) {
         Optional<Review> findReview = repo.findById(no);
+
+        if(!findReview.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
 
         Review review = findReview.get();
 
-        return review;
+        return ResponseEntity.ok(review);
     }
 
     @GetMapping(value = "/paging")
@@ -37,14 +41,14 @@ public class ReviewController {
     };
 
     @PostMapping
-    public ResponseEntity<Map<String,Object>> addReview(@RequestBody Review review) {
+    public ResponseEntity<Map<String,String>> addReview(@RequestBody Review review) {
 
         if(review.getName() == null || review.getImg() == null || review.getSpirit() == null ||
                 review.getAroma() == null || review.getTaste() == null || review.getFinish() == null ||
                 review.getScore() == 0 || review.getVol() == 0 ||
                 review.getName().isEmpty() || review.getImg().isEmpty() || review.getSpirit().isEmpty() ||
                 review.getAroma().isEmpty() || review.getTaste().isEmpty() || review.getFinish().isEmpty()){
-            Map<String, Object> res = new HashMap<>();
+            Map<String, String> res = new HashMap<>();
             res.put("message", "입력된 정보가 잘못되었습니다.");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
         }
@@ -52,7 +56,7 @@ public class ReviewController {
         Review savedReview = repo.save(review);
 
         if(savedReview != null) {
-            Map<String, Object> res = new HashMap<>();
+            Map<String, String> res = new HashMap<>();
             res.put("message", "소중한 리뷰 감사합니다.");
 
             return ResponseEntity.status(HttpStatus.CREATED).body(res);
@@ -68,7 +72,7 @@ public class ReviewController {
     }
 
     @PutMapping
-    public ResponseEntity<Map<String,Object>> modifyReview(@RequestParam long no, @RequestBody ReviewModifyRequest review) {
+    public ResponseEntity<Map<String,String>> modifyReview(@RequestParam long no, @RequestBody ReviewModifyRequest review) {
 
         Optional<Review> findReview = repo.findById(no);
 
@@ -95,7 +99,7 @@ public class ReviewController {
         }
 
         if(0 < review.getVol() && review.getVol() <= 100) {
-            toModifyReview.setScore(review.getVol());
+            toModifyReview.setVol(review.getVol());
         }
 
         if(review.getAroma() != null && !review.getAroma().isEmpty()) {
@@ -111,10 +115,9 @@ public class ReviewController {
         }
 
 
-
         repo.save(toModifyReview);
 
-        Map<String, Object> res = new HashMap<>();
+        Map<String, String> res = new HashMap<>();
         res.put("message", "정상적으로 수정되었습니다.");
 
         return ResponseEntity.status(HttpStatus.CREATED).body(res);
