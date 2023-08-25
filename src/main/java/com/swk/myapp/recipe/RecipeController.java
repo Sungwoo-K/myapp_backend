@@ -105,6 +105,6 @@ public class RecipeController {
         Map<String, String> res = new HashMap<>();
         res.put("message", "정상적으로 수정되었습니다.");
 
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return ResponseEntity.status(HttpStatus.CREATED).body(res);
     }
 }
