@@ -40,6 +40,9 @@ public class Review {
     @Column(nullable = false)
     private String finish;
 
+    @Column(nullable = false)
+    private long ownerId;
+
 
 
 }

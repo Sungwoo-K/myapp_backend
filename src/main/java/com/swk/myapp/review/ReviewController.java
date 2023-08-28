@@ -1,5 +1,7 @@
 package com.swk.myapp.review;
 
+import com.swk.myapp.auth.Auth;
+import com.swk.myapp.auth.AuthUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -8,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -40,6 +41,7 @@ public class ReviewController {
         return repo.findAll(pageRequest);
     };
 
+    @Auth
     @PostMapping
     public ResponseEntity<Map<String,String>> addReview(@RequestBody Review review) {
 
@@ -64,15 +66,26 @@ public class ReviewController {
         return ResponseEntity.ok().build();
     }
 
+    @Auth
     @DeleteMapping(value = "/{no}")
-    public ResponseEntity removeReview(@PathVariable long no) {
+    public ResponseEntity removeReview(@PathVariable long no,@RequestAttribute AuthUser user) {
+        Optional<Review> findReview = repo.findById(no);
+        if(!findReview.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
 
+        Review toRemoveReview = findReview.get();
+
+        if(user.getId() != toRemoveReview.getOwnerId()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
         repo.deleteById(no);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
+    @Auth
     @PutMapping
-    public ResponseEntity<Map<String,String>> modifyReview(@RequestParam long no, @RequestBody ReviewModifyRequest review) {
+    public ResponseEntity<Map<String,String>> modifyReview(@RequestParam long no, @RequestBody ReviewModifyRequest review, @RequestAttribute AuthUser user) {
 
         Optional<Review> findReview = repo.findById(no);
 
@@ -81,6 +94,10 @@ public class ReviewController {
         }
 
         Review toModifyReview = findReview.get();
+
+        if(user.getId() != toModifyReview.getOwnerId()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
 
         if(review.getName() != null && !review.getName().isEmpty()) {
             toModifyReview.setName(review.getName());

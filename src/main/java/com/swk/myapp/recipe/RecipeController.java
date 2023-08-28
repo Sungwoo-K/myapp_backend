@@ -1,5 +1,7 @@
 package com.swk.myapp.recipe;
 
+import com.swk.myapp.auth.Auth;
+import com.swk.myapp.auth.AuthUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -39,8 +41,9 @@ public class RecipeController {
         return repo.findAll(pageRequest);
     }
 
+    @Auth
     @PostMapping
-    public ResponseEntity<Map<String,String>> addRecipe(@RequestBody Recipe recipe) {
+    public ResponseEntity<Map<String,String>> addRecipe(@RequestBody Recipe recipe, @RequestAttribute AuthUser user) {
         if(recipe.getName() == null || recipe.getImg() == null || recipe.getSpirit() == null ||
                 recipe.getIngredients() == null || recipe.getRecipe() == null || recipe.getVol() == 0 ||
                 recipe.getName().isEmpty() || recipe.getImg().isEmpty() || recipe.getSpirit().isEmpty() ||
@@ -50,6 +53,7 @@ public class RecipeController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
         }
 
+        recipe.setOwnerId(user.getId());
         Recipe savedRecipe = repo.save(recipe);
 
         if(savedRecipe != null) {
@@ -61,20 +65,37 @@ public class RecipeController {
         return ResponseEntity.ok().build();
     }
 
+    @Auth
     @DeleteMapping(value = "/{no}")
-    public ResponseEntity removeRecipe(@PathVariable long no) {
+    public ResponseEntity removeRecipe(@PathVariable long no, @RequestAttribute AuthUser user) {
+        Optional<Recipe> findRecipe = repo.findById(no);
+        if(!findRecipe.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        Recipe toRemoveRecipe = findRecipe.get();
+
+        if(user.getId() != toRemoveRecipe.getOwnerId()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
         repo.deleteById(no);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
+    @Auth
     @PutMapping
-    public ResponseEntity<Map<String, String>> modifyRecipe(@RequestParam long no,@RequestBody RecipeModifyRequest recipe){
+    public ResponseEntity<Map<String, String>> modifyRecipe(@RequestParam long no,@RequestBody RecipeModifyRequest recipe, @RequestAttribute AuthUser user){
         Optional<Recipe> findRecipe = repo.findById(no);
         if(!findRecipe.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
 
         Recipe toModifyRecipe = findRecipe.get();
+
+        if(user.getId() != toModifyRecipe.getOwnerId()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
 
         if(recipe.getName() != null && !recipe.getName().isEmpty()) {
             toModifyRecipe.setName(recipe.getName());

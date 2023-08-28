@@ -36,6 +36,9 @@ public class Recipe {
     @Column(nullable = false)
     private ArrayList<String> recipe;
 
+    @Column(nullable = false)
+    private long ownerId;
+
 
 
 }
