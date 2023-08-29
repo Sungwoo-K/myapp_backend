@@ -41,6 +41,29 @@ public class ReviewController {
         return repo.findAll(pageRequest);
     };
 
+    @GetMapping(value = "/paging/search")
+    public Page<Review> getSearchReviewsPaging(@RequestParam Map<String,String> allParams) {
+        int page = Integer.parseInt(allParams.get("page"));
+        int size = Integer.parseInt(allParams.get("size"));
+
+        PageRequest pageRequest = PageRequest.of(page, size);
+
+        if(allParams.containsKey("vol")) {
+          int vol = Integer.parseInt(allParams.get("vol"));
+          return repo.findReviewByVol(vol, pageRequest);
+        }
+
+        if(allParams.containsKey("name")) {
+            return repo.findReviewByName(allParams.get("name"),pageRequest);
+        }
+
+        if(allParams.containsKey("spirit")) {
+            return repo.findReviewBySpirit(allParams.get("spirit"), pageRequest);
+        }
+
+        return null;
+    }
+
     @Auth
     @PostMapping
     public ResponseEntity<Map<String,String>> addReview(@RequestBody Review review, @RequestAttribute("authUser") AuthUser authUser) {

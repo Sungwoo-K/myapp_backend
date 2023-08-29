@@ -8,7 +8,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -40,6 +39,29 @@ public class RecipeController {
         PageRequest pageRequest =  PageRequest.of(page, size);
 
         return repo.findAll(pageRequest);
+    }
+
+    @GetMapping(value = "/paging/search")
+    public Page<Recipe> getSearchRecipePaging(@RequestParam Map<String,String> allParams){
+        int page = Integer.parseInt(allParams.get("page"));
+        int size = Integer.parseInt(allParams.get("size"));
+
+        PageRequest pageRequest = PageRequest.of(page, size);
+
+        if(allParams.containsKey("vol")) {
+            int vol = Integer.parseInt(allParams.get("vol"));
+            return repo.findRecipeByVol(vol, pageRequest);
+        }
+
+        if(allParams.containsKey("name")) {
+            return repo.findRecipeByName(allParams.get("name"),pageRequest);
+        }
+
+        if(allParams.containsKey("spirit")) {
+            return repo.findRecipeBySpirit(allParams.get("spirit"), pageRequest);
+        }
+
+        return null;
     }
 
     @Auth
