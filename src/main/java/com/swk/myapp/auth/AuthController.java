@@ -35,7 +35,6 @@ public class AuthController {
 
     @PostMapping(value = "/signup")
     public ResponseEntity<Map<String, String>> signUp(@RequestBody SignupRequest req) {
-        System.out.println(req);
 
         Optional<Login> findEmail = repo.findByEmail(req.getEmail());
         Optional<Login> findNickname = repo.findByNickname(req.getNickname());
@@ -65,8 +64,6 @@ public class AuthController {
             @RequestParam String email,
             @RequestParam String password,
             HttpServletResponse res) {
-        System.out.println(email);
-        System.out.println(password);
         Optional<Login> login = repo.findByEmail(email);
         if(!login.isPresent()) {
             return ResponseEntity
@@ -93,12 +90,10 @@ public class AuthController {
         String token = jwt.createToken(
                 l.getId(), l.getEmail(),
                 l.getNickname());
-        System.out.println(token);
-
 
         Cookie cookie = new Cookie("token", token);
         cookie.setPath("/");
-        cookie.setMaxAge((int) (jwt.TOKEN_TIMEOUT / 1000L));
+        cookie.setMaxAge((int) (jwt.TOKEN_TIMEOUT/ 1000L));
         cookie.setDomain("localhost");
 
 

@@ -43,8 +43,7 @@ public class ReviewController {
 
     @Auth
     @PostMapping
-    public ResponseEntity<Map<String,String>> addReview(@RequestBody Review review) {
-
+    public ResponseEntity<Map<String,String>> addReview(@RequestBody Review review, @RequestAttribute("authUser") AuthUser authUser) {
         if(review.getName() == null || review.getImg() == null || review.getSpirit() == null ||
                 review.getAroma() == null || review.getTaste() == null || review.getFinish() == null ||
                 review.getScore() == 0 || review.getVol() == 0 ||
@@ -55,6 +54,7 @@ public class ReviewController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
         }
 
+        review.setOwnerId(authUser.getId());
         Review savedReview = repo.save(review);
 
         if(savedReview != null) {
@@ -68,7 +68,7 @@ public class ReviewController {
 
     @Auth
     @DeleteMapping(value = "/{no}")
-    public ResponseEntity removeReview(@PathVariable long no,@RequestAttribute AuthUser user) {
+    public ResponseEntity removeReview(@PathVariable long no,@RequestAttribute("authUser") AuthUser authUser) {
         Optional<Review> findReview = repo.findById(no);
         if(!findReview.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
@@ -76,7 +76,7 @@ public class ReviewController {
 
         Review toRemoveReview = findReview.get();
 
-        if(user.getId() != toRemoveReview.getOwnerId()) {
+        if(authUser.getId() != toRemoveReview.getOwnerId()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         repo.deleteById(no);
@@ -85,7 +85,7 @@ public class ReviewController {
 
     @Auth
     @PutMapping
-    public ResponseEntity<Map<String,String>> modifyReview(@RequestParam long no, @RequestBody ReviewModifyRequest review, @RequestAttribute AuthUser user) {
+    public ResponseEntity<Map<String,String>> modifyReview(@RequestParam long no, @RequestBody ReviewModifyRequest review, @RequestAttribute("authUser") AuthUser authUser) {
 
         Optional<Review> findReview = repo.findById(no);
 
@@ -95,7 +95,7 @@ public class ReviewController {
 
         Review toModifyReview = findReview.get();
 
-        if(user.getId() != toModifyReview.getOwnerId()) {
+        if(authUser.getId() != toModifyReview.getOwnerId()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 

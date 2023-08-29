@@ -8,6 +8,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -43,7 +44,7 @@ public class RecipeController {
 
     @Auth
     @PostMapping
-    public ResponseEntity<Map<String,String>> addRecipe(@RequestBody Recipe recipe, @RequestAttribute AuthUser user) {
+    public ResponseEntity<Map<String,String>> addRecipe(@RequestBody Recipe recipe, @RequestAttribute("authUser") AuthUser authUser) {
         if(recipe.getName() == null || recipe.getImg() == null || recipe.getSpirit() == null ||
                 recipe.getIngredients() == null || recipe.getRecipe() == null || recipe.getVol() == 0 ||
                 recipe.getName().isEmpty() || recipe.getImg().isEmpty() || recipe.getSpirit().isEmpty() ||
@@ -53,7 +54,7 @@ public class RecipeController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
         }
 
-        recipe.setOwnerId(user.getId());
+        recipe.setOwnerId(authUser.getId());
         Recipe savedRecipe = repo.save(recipe);
 
         if(savedRecipe != null) {
@@ -67,7 +68,7 @@ public class RecipeController {
 
     @Auth
     @DeleteMapping(value = "/{no}")
-    public ResponseEntity removeRecipe(@PathVariable long no, @RequestAttribute AuthUser user) {
+    public ResponseEntity removeRecipe(@PathVariable long no, @RequestAttribute("authUser") AuthUser authUser) {
         Optional<Recipe> findRecipe = repo.findById(no);
         if(!findRecipe.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
@@ -75,7 +76,7 @@ public class RecipeController {
 
         Recipe toRemoveRecipe = findRecipe.get();
 
-        if(user.getId() != toRemoveRecipe.getOwnerId()) {
+        if(authUser.getId() != toRemoveRecipe.getOwnerId()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
@@ -85,7 +86,7 @@ public class RecipeController {
 
     @Auth
     @PutMapping
-    public ResponseEntity<Map<String, String>> modifyRecipe(@RequestParam long no,@RequestBody RecipeModifyRequest recipe, @RequestAttribute AuthUser user){
+    public ResponseEntity<Map<String, String>> modifyRecipe(@RequestParam long no,@RequestBody RecipeModifyRequest recipe, @RequestAttribute("authUser") AuthUser authUser){
         Optional<Recipe> findRecipe = repo.findById(no);
         if(!findRecipe.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
@@ -93,7 +94,7 @@ public class RecipeController {
 
         Recipe toModifyRecipe = findRecipe.get();
 
-        if(user.getId() != toModifyRecipe.getOwnerId()) {
+        if(authUser.getId() != toModifyRecipe.getOwnerId()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 

@@ -12,7 +12,7 @@ import java.util.Date;
 public class JwtUtil {
 
     public String secret = "alskmvllewkdkmslkmfe";
-    public final long TOKEN_TIMEOUT = 1000 * 60 * 60 * 24;
+    public final long TOKEN_TIMEOUT = 1000 * 60 * 60 * 24 * 7;
 
     public String createToken(long id, String email, String nickname) {
         Date now = new Date();
