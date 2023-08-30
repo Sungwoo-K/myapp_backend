@@ -12,7 +12,12 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     @Query(value = "select * " +
                     "from review " +
                     "where vol >= :vol", nativeQuery = true)
-    Page<Review> findReviewByVol(int vol, Pageable page);
+    Page<Review> findReviewByVolUp(int vol, Pageable page);
+
+    @Query(value = "select * " +
+                    "from review " +
+                    "where vol <= :vol", nativeQuery = true)
+    Page<Review> findReviewByVolDown(int vol, Pageable page);
 
     @Query(value = "select * " +
                     "from review " +

@@ -10,7 +10,12 @@ public interface RecipeRepository extends JpaRepository<Recipe, Long> {
     @Query(value = "select * " +
             "from recipe " +
             "where vol >= :vol", nativeQuery = true)
-    Page<Recipe> findRecipeByVol(int vol, Pageable page);
+    Page<Recipe> findRecipeByVolUp(int vol, Pageable page);
+
+    @Query(value = "select * " +
+                    "from recipe " +
+                    "where vol <= :vol", nativeQuery = true)
+    Page<Recipe> findRecipeByVolDown(int vol, Pageable page);
 
     @Query(value = "select * " +
             "from recipe " +

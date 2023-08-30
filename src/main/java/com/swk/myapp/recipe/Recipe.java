@@ -33,7 +33,7 @@ public class Recipe {
     @Column(nullable = false)
     private String ingredients;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 750)
     private ArrayList<String> recipe;
 
     @Column(nullable = false)

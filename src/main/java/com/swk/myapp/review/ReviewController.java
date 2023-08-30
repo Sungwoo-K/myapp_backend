@@ -48,9 +48,14 @@ public class ReviewController {
 
         PageRequest pageRequest = PageRequest.of(page, size);
 
-        if(allParams.containsKey("vol")) {
-          int vol = Integer.parseInt(allParams.get("vol"));
-          return repo.findReviewByVol(vol, pageRequest);
+        if(allParams.containsKey("volup")) {
+          int volUp = Integer.parseInt(allParams.get("volup"));
+          return repo.findReviewByVolUp(volUp, pageRequest);
+        }
+
+        if(allParams.containsKey("voldown")) {
+            int volDown = Integer.parseInt(allParams.get("voldown"));
+            return repo.findReviewByVolDown(volDown, pageRequest);
         }
 
         if(allParams.containsKey("name")) {

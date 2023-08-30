@@ -48,9 +48,14 @@ public class RecipeController {
 
         PageRequest pageRequest = PageRequest.of(page, size);
 
-        if(allParams.containsKey("vol")) {
-            int vol = Integer.parseInt(allParams.get("vol"));
-            return repo.findRecipeByVol(vol, pageRequest);
+        if(allParams.containsKey("volup")) {
+            int volUp = Integer.parseInt(allParams.get("volup"));
+            return repo.findRecipeByVolUp(volUp, pageRequest);
+        }
+
+        if(allParams.containsKey("voldown")) {
+            int volDown = Integer.parseInt(allParams.get("voldown"));
+            return repo.findRecipeByVolDown(volDown, pageRequest);
         }
 
         if(allParams.containsKey("name")) {
