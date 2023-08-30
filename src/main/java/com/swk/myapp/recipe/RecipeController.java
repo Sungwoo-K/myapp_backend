@@ -33,6 +33,25 @@ public class RecipeController {
         return ResponseEntity.ok(recipe);
     }
 
+    @Auth
+    @GetMapping(value = "/edit")
+    public ResponseEntity<Recipe> getRecipeForEdit(@RequestParam long no,@RequestAttribute("authUser") AuthUser authUser) {
+        Optional<Recipe> findRecipe = repo.findById(no);
+
+        if(!findRecipe.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        Recipe recipe = findRecipe.get();
+
+        if(authUser.getId() != recipe.getOwnerId()){
+            return ResponseEntity
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .build();
+        }
+        return ResponseEntity.ok(recipe);
+    }
+
     @GetMapping(value = "/paging")
     public Page<Recipe> getRecipesPaging(@RequestParam int page, @RequestParam int size) {
 

@@ -33,6 +33,25 @@ public class ReviewController {
         return ResponseEntity.ok(review);
     }
 
+    @Auth
+    @GetMapping(value = "/edit")
+    public ResponseEntity<Review> getReviewForEdit(@RequestParam long no,@RequestAttribute("authUser") AuthUser authUser ){
+        Optional<Review> findReview = repo.findById(no);
+
+        if(!findReview.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        Review review = findReview.get();
+
+        if(authUser.getId() != review.getOwnerId()){
+            return ResponseEntity
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .build();
+        }
+        return ResponseEntity.ok(review);
+    }
+
     @GetMapping(value = "/paging")
     public Page<Review> getReviewsPaging(@RequestParam int page, @RequestParam int size) {
 
