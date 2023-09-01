@@ -2,6 +2,8 @@ package com.swk.myapp.review;
 
 import com.swk.myapp.auth.Auth;
 import com.swk.myapp.auth.AuthUser;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -13,6 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+@Tag(name = "리뷰 관리 API")
 @RestController
 @RequestMapping(value = "/reviews")
 public class ReviewController {
@@ -52,6 +55,7 @@ public class ReviewController {
         return ResponseEntity.ok(review);
     }
 
+    @Operation(summary = "리뷰 목록 페이징 조회")
     @GetMapping(value = "/paging")
     public Page<Review> getReviewsPaging(@RequestParam int page, @RequestParam int size) {
 
