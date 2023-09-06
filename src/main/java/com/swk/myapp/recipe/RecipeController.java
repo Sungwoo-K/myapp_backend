@@ -2,6 +2,8 @@ package com.swk.myapp.recipe;
 
 import com.swk.myapp.auth.Auth;
 import com.swk.myapp.auth.AuthUser;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -13,6 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+@Tag(name = "레시피 관리 API")
 @RestController
 @RequestMapping(value = "/recipes")
 public class RecipeController {
@@ -20,6 +23,7 @@ public class RecipeController {
     @Autowired
     RecipeRepository repo;
 
+    @Operation(summary = "레시피 단일 조회")
     @GetMapping
     public ResponseEntity<Recipe> getRecipe(@RequestParam long no) {
         Optional<Recipe> findRecipe = repo.findById(no);
@@ -33,6 +37,7 @@ public class RecipeController {
         return ResponseEntity.ok(recipe);
     }
 
+    @Operation(summary = "수정할 리뷰 조회 및 권한 체크")
     @Auth
     @GetMapping(value = "/edit")
     public ResponseEntity<Recipe> getRecipeForEdit(@RequestParam long no,@RequestAttribute("authUser") AuthUser authUser) {
@@ -52,6 +57,7 @@ public class RecipeController {
         return ResponseEntity.ok(recipe);
     }
 
+    @Operation(summary = "레시피 목록 페이징 조회")
     @GetMapping(value = "/paging")
     public Page<Recipe> getRecipesPaging(@RequestParam int page, @RequestParam int size) {
 
@@ -60,6 +66,7 @@ public class RecipeController {
         return repo.findAll(pageRequest);
     }
 
+    @Operation(summary = "레시피 목록 조건 페이징 조회")
     @GetMapping(value = "/paging/search")
     public Page<Recipe> getSearchRecipePaging(@RequestParam Map<String,String> allParams){
         int page = Integer.parseInt(allParams.get("page"));
@@ -88,6 +95,7 @@ public class RecipeController {
         return null;
     }
 
+    @Operation(summary = "레시피 추가")
     @Auth
     @PostMapping
     public ResponseEntity<Map<String,String>> addRecipe(@RequestBody Recipe recipe, @RequestAttribute("authUser") AuthUser authUser) {
@@ -112,6 +120,7 @@ public class RecipeController {
         return ResponseEntity.ok().build();
     }
 
+    @Operation(summary = "레시피 권한 체크 및 삭제")
     @Auth
     @DeleteMapping(value = "/{no}")
     public ResponseEntity removeRecipe(@PathVariable long no, @RequestAttribute("authUser") AuthUser authUser) {
@@ -130,6 +139,7 @@ public class RecipeController {
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
+    @Operation(summary = "레시피 권한 체크 및 수정")
     @Auth
     @PutMapping
     public ResponseEntity<Map<String, String>> modifyRecipe(@RequestParam long no,@RequestBody RecipeModifyRequest recipe, @RequestAttribute("authUser") AuthUser authUser){

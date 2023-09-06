@@ -5,6 +5,8 @@ import com.swk.myapp.auth.entity.LoginRepository;
 import com.swk.myapp.auth.request.SignupRequest;
 import com.swk.myapp.auth.util.HashUtil;
 import com.swk.myapp.auth.util.JwtUtil;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+@Tag(name = "인증 API")
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
@@ -33,6 +36,8 @@ public class AuthController {
     @Autowired
     private JwtUtil jwt;
 
+
+    @Operation(summary = "회원가입")
     @PostMapping(value = "/signup")
     public ResponseEntity<Map<String, String>> signUp(@RequestBody SignupRequest req) {
 
@@ -59,6 +64,7 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.CREATED).body(res);
     }
 
+    @Operation(summary = "로그인")
     @PostMapping(value = "/signin")
     public ResponseEntity signIn(
             @RequestParam String email,
