@@ -23,6 +23,7 @@ public class ReviewController {
     @Autowired
     ReviewRepository repo;
 
+    @Operation(summary = "리뷰 단일 조회")
     @GetMapping
     public ResponseEntity<Review> getReview(@RequestParam long no) {
         Optional<Review> findReview = repo.findById(no);
@@ -36,6 +37,7 @@ public class ReviewController {
         return ResponseEntity.ok(review);
     }
 
+    @Operation(summary = "수정할 리뷰 조회 및 권한 체크")
     @Auth
     @GetMapping(value = "/edit")
     public ResponseEntity<Review> getReviewForEdit(@RequestParam long no,@RequestAttribute("authUser") AuthUser authUser ){
@@ -64,6 +66,7 @@ public class ReviewController {
         return repo.findAll(pageRequest);
     };
 
+    @Operation(summary = "리뷰 목록 조건 페이징 조회")
     @GetMapping(value = "/paging/search")
     public Page<Review> getSearchReviewsPaging(@RequestParam Map<String,String> allParams) {
         int page = Integer.parseInt(allParams.get("page"));
@@ -92,6 +95,7 @@ public class ReviewController {
         return null;
     }
 
+    @Operation(summary = "리뷰 추가")
     @Auth
     @PostMapping
     public ResponseEntity<Map<String,String>> addReview(@RequestBody Review review, @RequestAttribute("authUser") AuthUser authUser) {
@@ -117,6 +121,7 @@ public class ReviewController {
         return ResponseEntity.ok().build();
     }
 
+    @Operation(summary = "리뷰 권한 체크 및 삭제")
     @Auth
     @DeleteMapping(value = "/{no}")
     public ResponseEntity removeReview(@PathVariable long no,@RequestAttribute("authUser") AuthUser authUser) {
@@ -134,6 +139,7 @@ public class ReviewController {
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
+    @Operation(summary = "리뷰 권한 체크 및 수정")
     @Auth
     @PutMapping
     public ResponseEntity<Map<String,String>> modifyReview(@RequestParam long no, @RequestBody ReviewModifyRequest review, @RequestAttribute("authUser") AuthUser authUser) {
