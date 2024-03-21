@@ -69,7 +69,7 @@ public class AuthController {
             return ResponseEntity
                     .status(HttpStatus.FOUND)
                     .location(ServletUriComponentsBuilder
-                            .fromHttpUrl("http://localhost:5500/view/sign-in.html?err=Unauthorized")
+                            .fromHttpUrl("http://58.233.39.211:8000/view/sign-in.html?err=Unauthorized")
                             .build().toUri())
                     .build();
         }
@@ -80,7 +80,7 @@ public class AuthController {
             return ResponseEntity
                     .status(HttpStatus.FOUND)
                     .location(ServletUriComponentsBuilder
-                            .fromHttpUrl("http://localhost:5500/view/sign-in.html?err=Unauthorized")
+                            .fromHttpUrl("http://58.233.39.211:8000/view/sign-in.html?err=Unauthorized")
                             .build().toUri())
                     .build();
         }
@@ -94,7 +94,7 @@ public class AuthController {
         Cookie cookie = new Cookie("token", token);
         cookie.setPath("/");
         cookie.setMaxAge((int) (jwt.TOKEN_TIMEOUT/ 1000L));
-        cookie.setDomain("localhost");
+        cookie.setDomain("58.233.39.211");
 
 
         res.addCookie(cookie);
@@ -102,7 +102,7 @@ public class AuthController {
         return ResponseEntity
                 .status(HttpStatus.FOUND)
                 .location(ServletUriComponentsBuilder
-                        .fromHttpUrl("http://localhost:5500/view/review-page.html")
+                        .fromHttpUrl("http://58.233.39.211:8000/view/review-page.html")
                         .build().toUri())
                 .build();
     }
