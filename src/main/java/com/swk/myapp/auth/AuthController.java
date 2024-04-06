@@ -75,7 +75,7 @@ public class AuthController {
             return ResponseEntity
                     .status(HttpStatus.FOUND)
                     .location(ServletUriComponentsBuilder
-                            .fromHttpUrl("http://58.233.39.211:8000/view/sign-in.html?err=Unauthorized")
+                            .fromHttpUrl("https://www.woohyo.store/view/sign-in.html?err=Unauthorized")
                             .build().toUri())
                     .build();
         }
@@ -86,7 +86,7 @@ public class AuthController {
             return ResponseEntity
                     .status(HttpStatus.FOUND)
                     .location(ServletUriComponentsBuilder
-                            .fromHttpUrl("http://58.233.39.211:8000/view/sign-in.html?err=Unauthorized")
+                            .fromHttpUrl("https://www.woohyo.store/view/sign-in.html?err=Unauthorized")
                             .build().toUri())
                     .build();
         }
@@ -100,7 +100,7 @@ public class AuthController {
         Cookie cookie = new Cookie("token", token);
         cookie.setPath("/");
         cookie.setMaxAge((int) (jwt.TOKEN_TIMEOUT/ 1000L));
-        cookie.setDomain("58.233.39.211");
+        cookie.setDomain("www.woohyo.store");
 
 
         res.addCookie(cookie);
@@ -108,7 +108,7 @@ public class AuthController {
         return ResponseEntity
                 .status(HttpStatus.FOUND)
                 .location(ServletUriComponentsBuilder
-                        .fromHttpUrl("http://58.233.39.211:8000/view/review-page.html")
+                        .fromHttpUrl("https://www.woohyo.store/view/review-page.html")
                         .build().toUri())
                 .build();
     }

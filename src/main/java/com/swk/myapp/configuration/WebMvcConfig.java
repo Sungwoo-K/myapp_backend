@@ -19,12 +19,10 @@ public class WebMvcConfig implements WebMvcConfigurer {
         registry
                 .addMapping("/**")
                 .allowedOrigins(
-                        "http://localhost:5500",
-                        "http://127.0.0.1:5500",
-                        "http://localhost",
-                        "http://127.0.0.1",
-                        "http://172.31.41.24",
-                        "http://58.233.39.211:8000")
+                        "http://15.165.250.232",
+                        "http://www.woohyo.store",
+                        "https://15.165.250.232",
+                        "https://www.woohyo.store")
                 .allowedMethods("*");
     }
 
